@@ -56,3 +56,108 @@ function bpe_menu_settings() {
 }
 
 
+/**
+ * Creates array of terms paths or slugs.
+ *
+ * @param string $taxonomy
+ * @param string $content
+ *
+ * @return string
+ */
+function bpe_get_terms_array( $taxonomy, $content ) {
+
+	if ( ! taxonomy_exists( $taxonomy ) )
+		return array();
+
+	$terms_args = array(
+		'hide_empty' => false,
+	);
+
+	// get all terms for the taxonomy
+	$terms = get_terms( $taxonomy, $terms_args );
+	$paths = array();
+	$slugs = array();
+
+	if ( empty( $terms ) )
+		return array();
+
+	foreach ( $terms as $key => $term ) {
+		if ( $term->parent == 0 ) {
+			$paths[] = bpe_esc_name( $term->name );
+		} else {
+			$paths[] = bpe_walk_terms( $terms, $term, '' );
+		}
+		$slugs[] = $term->slug;
+	}
+	array_multisort( $paths, $slugs );
+
+	return ( $content == 'names' ) ? $paths : $slugs;
+}
+
+
+/**
+ * Creates term path, helper function for bpe_get_taxonomies_array().
+ *
+ * @param array $terms
+ * @param object $current_term
+ * @param string $path
+ *
+ * @return string
+ */
+function bpe_walk_terms( $terms, $current_term, $path ) {
+	$path = ( empty( $path ) ) ? bpe_esc_name( $current_term->name ) : bpe_esc_name( $current_term->name ) . '/' . $path;
+
+	if ( $current_term->parent == 0 )
+		return $path;
+
+	foreach ( $terms as $term ) {
+		if ( $current_term->parent == $term->term_id ) {
+			$path = bpe_walk_terms( $terms, $term, $path );
+			break;
+		}
+	}
+
+	return $path;
+}
+
+
+/**
+ * Escapes name for use in path.
+ *
+ * @param string $name
+ *
+ * @return string
+ */
+function bpe_esc_name( $name ) {
+	return str_replace( '/', '\/', $name );
+}
+
+
+function bpe_export( $content = array() ) {
+	$sitename = sanitize_key( get_bloginfo( 'name' ) );
+	$filename = $sitename . '-bulkpress-export-' . date( 'Y-m-d' ) . '.txt';
+
+	header( 'Content-Description: File Transfer' );
+	header( 'Content-Disposition: attachment; filename=' . $filename );
+	header( 'Content-Type: text/plain; charset=' . get_option( 'blog_charset' ), true );
+
+	echo implode( PHP_EOL, $content );
+}
+
+function bpe_listen_export() {
+	if ( ! isset( $_POST['bpe-download'] ) )
+		return;
+
+	if ( empty( $_POST['taxonomy'] ) )
+		return;
+
+	if ( empty( $_POST['content'] ) )
+		return;
+
+	// output file with terms names or slugs
+	$terms = bpe_get_terms_array( $_POST['taxonomy'], $_POST['content'] );
+	bpe_export( $terms );
+	die();
+}
+add_action( 'admin_init', 'bpe_listen_export' );
+

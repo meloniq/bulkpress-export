@@ -4,10 +4,6 @@
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 
 
-	if ( isset( $_POST['bpe-download'] ) ) {
-		// output file with terms names or slugs
-	}
-
 	$taxonomies = get_taxonomies( array(), 'objects' );
 ?>
 	<div class="wrap">
@@ -34,7 +30,7 @@
 					<tr valign="top">
 						<th scope="row"><label for="content"><?php _e( 'Content', BPE_TD ); ?></label></th>
 						<td>
-							<input type="radio" value="names" name="content"> <?php _e( 'Names', BPE_TD ); ?>
+							<input type="radio" value="names" name="content" checked="checked"> <?php _e( 'Names', BPE_TD ); ?>
 							<input type="radio" value="slugs" name="content"> <?php _e( 'Slugs', BPE_TD ); ?>
 							<p class="description"><?php _e( 'Choose what to export.', BPE_TD ); ?></p>
 						</td>
