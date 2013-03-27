@@ -129,7 +129,9 @@ function bpe_walk_terms( $terms, $current_term, $path ) {
  * @return string
  */
 function bpe_esc_name( $name ) {
-	return str_replace( '/', '\/', $name );
+	$name = str_replace( '&amp;', '&', $name );
+	$name = str_replace( '/', '\/', $name );
+	return $name;
 }
 
 
