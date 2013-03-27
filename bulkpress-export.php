@@ -148,7 +148,7 @@ function bpe_export( $content = array() ) {
 	header( 'Content-Disposition: attachment; filename=' . $filename );
 	header( 'Content-Type: text/plain; charset=' . get_option( 'blog_charset' ), true );
 
-	echo implode( PHP_EOL, $content );
+	echo implode( "\r\n", $content );
 }
 
 
