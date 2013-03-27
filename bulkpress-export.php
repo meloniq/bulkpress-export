@@ -5,7 +5,7 @@
 	Description: Export taxonomies into formatted file compatible with BulkPress plugin.
 	Author: MELONIQ.NET
 	Author URI: http://blog.meloniq.net
-	Version: 1.0
+	Version: 0.1
 	License: GPLv2 or later
 */
 
