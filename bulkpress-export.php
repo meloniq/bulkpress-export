@@ -133,6 +133,11 @@ function bpe_esc_name( $name ) {
 }
 
 
+/**
+ * Generate and send .txt file to user browser.
+ *
+ * @param array $content
+ */
 function bpe_export( $content = array() ) {
 	$sitename = sanitize_key( get_bloginfo( 'name' ) );
 	$filename = $sitename . '-bulkpress-export-' . date( 'Y-m-d' ) . '.txt';
@@ -144,20 +149,24 @@ function bpe_export( $content = array() ) {
 	echo implode( PHP_EOL, $content );
 }
 
+
+/**
+ * Listener for file download request.
+ */
 function bpe_listen_export() {
 	if ( ! isset( $_POST['bpe-download'] ) )
 		return;
 
-	if ( empty( $_POST['taxonomy'] ) )
-		return;
+	// download terms
+	if ( ! empty( $_POST['taxonomy'] ) && ! empty( $_POST['content'] ) ) {
 
-	if ( empty( $_POST['content'] ) )
-		return;
-
-	// output file with terms names or slugs
-	$terms = bpe_get_terms_array( $_POST['taxonomy'], $_POST['content'] );
-	bpe_export( $terms );
-	die();
+		$taxonomy = trim( stripslashes( $_POST['taxonomy'] ) );
+		$content = trim( stripslashes( $_POST['content'] ) );
+		// output file with terms names or slugs
+		$terms = bpe_get_terms_array( $taxonomy, $content );
+		bpe_export( $terms );
+		die();
+	}
 }
 add_action( 'admin_init', 'bpe_listen_export' );
 
