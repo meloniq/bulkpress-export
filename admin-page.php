@@ -7,8 +7,7 @@
 	$taxonomies = get_taxonomies( array(), 'objects' );
 ?>
 	<div class="wrap">
-		<div class="icon32" id="icon-tools"><br /></div>
-		<h2><?php _e( 'BulkPress - Export', BPE_TD ); ?></h2>
+		<h1><?php _e( 'BulkPress - Export', BPE_TD ); ?></h1>
 		<p><?php _e( 'When you click the button below, it will create an formatted file for you to save to your computer.', BPE_TD ); ?></p>
 		<p><?php _e( 'Once you\'ve saved the download file, you can use the BulkPress plugin in another WordPress installation to import the content from this site.', BPE_TD ); ?></p>
 		<form name="mainform" method="post" action="">
@@ -16,18 +15,18 @@
 
 			<table class="form-table">
 				<tbody>
-					<tr valign="top">
+					<tr>
 						<th scope="row"><label for="taxonomy"><?php _e( 'Taxonomy', BPE_TD ); ?></label></th>
 						<td>
 							<select id="taxonomy" name="taxonomy">
 								<?php foreach ( $taxonomies as $key => $taxonomy ) { ?>
-									<option value="<?php echo esc_attr( $key ); ?>"><?php echo $taxonomy->labels->singular_name; ?></option>
+									<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $taxonomy->labels->singular_name ); ?></option>
 								<?php } ?>
 							</select>
 							<p class="description"><?php _e( 'Select the taxonomy which you would like to export.', BPE_TD ); ?></p>
 						</td>
 					</tr>
-					<tr valign="top">
+					<tr>
 						<th scope="row"><label for="content"><?php _e( 'Content', BPE_TD ); ?></label></th>
 						<td>
 							<input type="radio" value="names" name="content" checked="checked"> <?php _e( 'Names', BPE_TD ); ?>

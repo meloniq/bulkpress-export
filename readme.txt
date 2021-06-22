@@ -1,18 +1,18 @@
 === BulkPress - Export ===
 Contributors: meloniq
-Donate link: http://blog.meloniq.net/donate/
+Donate link: https://blog.meloniq.net/donate/
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 Tags: bulkpress, bulk, categories, terms, export, mass, taxonomies, taxonomy, term, slug, multiple
-Requires at least: 3.3
-Tested up to: 3.9
-Stable tag: 0.1
+Requires at least: 4.9
+Tested up to: 5.7
+Stable tag: 0.2
 
 Export taxonomies into formatted file compatible with BulkPress plugin.
 
 == Description ==
 
-Export taxonomies into formatted file compatible with <a href="http://wordpress.org/extend/plugins/bulkpress/">BulkPress</a> or <a href="http://wordpress.org/extend/plugins/wpessence-bulk-categories/">WPEssence Bulk Categories</a> plugin.
+Export taxonomies into formatted file compatible with [BulkPress](https://wordpress.org/plugins/bulkpress/) plugin.
 
 
 == Installation ==
@@ -23,6 +23,9 @@ Export taxonomies into formatted file compatible with <a href="http://wordpress.
 
 
 == Changelog ==
+
+= 0.2 =
+* Added validation of incoming data
 
 = 0.1 =
 * Initial release
@@ -35,7 +38,7 @@ Export taxonomies into formatted file compatible with <a href="http://wordpress.
 
 = It does not work, what to do? =
 
-Report it with details on <a href="http://wordpress.org/support/plugin/bulkpress-export">support forum</a>.
+Report it with details on [support forum](https://wordpress.org/support/plugin/bulkpress-export/).
 
 
 == Screenshots ==

@@ -1,11 +1,11 @@
 <?php
 /*
 	Plugin Name: BulkPress - Export
-	Plugin URI: http://blog.meloniq.net/
+	Plugin URI: https://blog.meloniq.net/
 	Description: Export taxonomies into formatted file compatible with BulkPress plugin.
 	Author: MELONIQ.NET
-	Author URI: http://blog.meloniq.net
-	Version: 0.1
+	Author URI: https://blog.meloniq.net
+	Version: 0.2
 	License: GPLv2 or later
 */
 
@@ -20,7 +20,7 @@ if ( ! function_exists( 'add_action' ) )
 /**
  * Plugin version and textdomain constants
  */
-define( 'BPE_VERSION', '0.1' );
+define( 'BPE_VERSION', '0.2' );
 define( 'BPE_TD', 'bulkpress-export' );
 
 
@@ -66,8 +66,9 @@ function bpe_menu_settings() {
  */
 function bpe_get_terms_array( $taxonomy, $content ) {
 
-	if ( ! taxonomy_exists( $taxonomy ) )
+	if ( ! taxonomy_exists( $taxonomy ) ) {
 		return array();
+	}
 
 	$terms_args = array(
 		'hide_empty' => false,
@@ -78,8 +79,9 @@ function bpe_get_terms_array( $taxonomy, $content ) {
 	$paths = array();
 	$slugs = array();
 
-	if ( empty( $terms ) )
+	if ( empty( $terms ) ) {
 		return array();
+	}
 
 	foreach ( $terms as $key => $term ) {
 		if ( $term->parent == 0 ) {
@@ -107,8 +109,9 @@ function bpe_get_terms_array( $taxonomy, $content ) {
 function bpe_walk_terms( $terms, $current_term, $path ) {
 	$path = ( empty( $path ) ) ? bpe_esc_name( $current_term->name ) : bpe_esc_name( $current_term->name ) . '/' . $path;
 
-	if ( $current_term->parent == 0 )
+	if ( $current_term->parent == 0 ) {
 		return $path;
+	}
 
 	foreach ( $terms as $term ) {
 		if ( $current_term->parent == $term->term_id ) {
@@ -156,19 +159,32 @@ function bpe_export( $content = array() ) {
  * Listener for file download request.
  */
 function bpe_listen_export() {
-	if ( ! isset( $_POST['bpe-download'] ) )
+	if ( ! isset( $_POST['bpe-download'] ) ) {
 		return;
-
-	// download terms
-	if ( ! empty( $_POST['taxonomy'] ) && ! empty( $_POST['content'] ) ) {
-
-		$taxonomy = trim( stripslashes( $_POST['taxonomy'] ) );
-		$content = trim( stripslashes( $_POST['content'] ) );
-		// output file with terms names or slugs
-		$terms = bpe_get_terms_array( $taxonomy, $content );
-		bpe_export( $terms );
-		die();
 	}
+
+	if ( empty( $_POST['taxonomy'] ) || empty( $_POST['content'] ) ) {
+		return;
+	}
+
+	// check given content type value
+	$content_types = array( 'names', 'slugs' );
+	$content       = wp_kses_data( $_POST['content'] );
+	if ( ! in_array( $content, $content_types ) ) {
+		return;
+	}
+
+	// check given taxonomy value
+	$taxonomies = get_taxonomies( array(), 'names' );
+	$taxonomy   = wp_kses_data( $_POST['taxonomy'] );
+	if ( ! in_array( $taxonomy, $taxonomies ) ) {
+		return;
+	}
+
+	// output file with terms names or slugs
+	$terms = bpe_get_terms_array( $taxonomy, $content );
+	bpe_export( $terms );
+	die();
 }
 add_action( 'admin_init', 'bpe_listen_export' );
 
