@@ -5,7 +5,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 Tags: bulkpress, bulk, categories, terms, export, mass, taxonomies, taxonomy, term, slug, multiple
 Requires at least: 4.9
-Tested up to: 5.7
+Tested up to: 6.2
 Stable tag: 0.2
 
 Export taxonomies into formatted file compatible with BulkPress plugin.
