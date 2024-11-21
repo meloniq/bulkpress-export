@@ -12,6 +12,7 @@
 		<p><?php _e( 'Once you\'ve saved the download file, you can use the BulkPress plugin in another WordPress installation to import the content from this site.', BPE_TD ); ?></p>
 		<form name="mainform" method="post" action="">
 			<input type="hidden" value="true" name="bpe-download">
+			<?php wp_nonce_field( 'bpe-download' ); ?>
 
 			<table class="form-table">
 				<tbody>

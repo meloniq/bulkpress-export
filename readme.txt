@@ -1,12 +1,12 @@
 === BulkPress - Export ===
 Contributors: meloniq
-Donate link: https://blog.meloniq.net/donate/
+Tags: bulkpress, export, categories, terms, taxonomies
+Requires at least: 4.9
+Tested up to: 6.7
+Stable tag: 0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-Tags: bulkpress, bulk, categories, terms, export, mass, taxonomies, taxonomy, term, slug, multiple
-Requires at least: 4.9
-Tested up to: 6.2
-Stable tag: 0.2
+
 
 Export taxonomies into formatted file compatible with BulkPress plugin.
 
@@ -23,6 +23,10 @@ Export taxonomies into formatted file compatible with [BulkPress](https://wordpr
 
 
 == Changelog ==
+
+= 0.3 =
+* Fixed security issue CSRF on admin page
+* Fixed loading textdomain too early
 
 = 0.2 =
 * Added validation of incoming data

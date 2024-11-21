@@ -5,7 +5,7 @@
 	Description: Export taxonomies into formatted file compatible with BulkPress plugin.
 	Author: MELONIQ.NET
 	Author URI: https://blog.meloniq.net
-	Version: 0.2
+	Version: 0.3
 	License: GPLv2 or later
 */
 
@@ -20,14 +20,17 @@ if ( ! function_exists( 'add_action' ) )
 /**
  * Plugin version and textdomain constants
  */
-define( 'BPE_VERSION', '0.2' );
+define( 'BPE_VERSION', '0.3' );
 define( 'BPE_TD', 'bulkpress-export' );
 
 
 /**
  * Load Text-Domain
  */
-load_plugin_textdomain( BPE_TD, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+function bpe_load_textdomain() {
+	load_plugin_textdomain( BPE_TD, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+}
+add_action( 'init', 'bpe_load_textdomain' );
 
 
 /**
@@ -164,6 +167,15 @@ function bpe_listen_export() {
 	}
 
 	if ( empty( $_POST['taxonomy'] ) || empty( $_POST['content'] ) ) {
+		return;
+	}
+
+	// check nonce
+	if ( ! isset( $_POST['_wpnonce'] ) ) {
+		return;
+	}
+
+	if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'bpe-download' ) ) {
 		return;
 	}
 
