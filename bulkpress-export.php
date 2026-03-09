@@ -21,13 +21,12 @@
  * @package BulkPress\Export
  */
 
-/**
- * Avoid calling file directly
- */
-if ( ! function_exists( 'add_action' ) ) {
-	die( 'Whoops! You shouldn\'t be doing that.' );
-}
+namespace BulkPress\Export;
 
+// If this file is accessed directly, then abort.
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 /**
  * Plugin version and textdomain constants
@@ -37,30 +36,18 @@ define( 'BPE_TD', 'bulkpress-export' );
 
 
 /**
- * Initialize admin menu.
+ * Setup.
+ *
+ * @return void
  */
-if ( is_admin() ) {
-	add_action( 'admin_menu', 'bpe_add_menu_links' );
+function bpe_init() {
+	global $bulkpress_export;
+
+	require_once __DIR__ . '/src/class-admin-page.php';
+
+	$bulkpress_export['admin-page'] = new Admin_Page();
 }
-
-
-/**
- * Populate administration menu of the plugin.
- */
-function bpe_add_menu_links() {
-
-	add_management_page( __( 'BulkPress - Export', 'bulkpress-export' ), __( 'BulkPress - Export', 'bulkpress-export' ), 'manage_options', 'bulkpress-export', 'bpe_menu_settings' );
-}
-
-
-/**
- * Create settings page in admin.
- */
-function bpe_menu_settings() {
-
-	include_once __DIR__ . '/admin-page.php';
-}
-
+add_action( 'plugins_loaded', __NAMESPACE__ . '\bpe_init' );
 
 /**
  * Creates array of terms paths or slugs.
@@ -163,46 +150,3 @@ function bpe_export( $content = array() ) {
 
 	echo implode( "\r\n", $content ); // phpcs:ignore
 }
-
-
-/**
- * Listener for file download request.
- */
-function bpe_listen_export() {
-	if ( ! isset( $_POST['bpe-download'] ) ) {
-		return;
-	}
-
-	if ( empty( $_POST['taxonomy'] ) || empty( $_POST['content'] ) ) {
-		return;
-	}
-
-	// check nonce.
-	if ( ! isset( $_POST['_wpnonce'] ) ) {
-		return;
-	}
-
-	if ( ! wp_verify_nonce( wp_kses_data( wp_unslash( $_POST['_wpnonce'] ) ), 'bpe-download' ) ) {
-		return;
-	}
-
-	// check given content type value.
-	$content_types = array( 'names', 'slugs' );
-	$content       = wp_kses_data( wp_unslash( $_POST['content'] ) );
-	if ( ! in_array( $content, $content_types, true ) ) {
-		return;
-	}
-
-	// check given taxonomy value.
-	$taxonomies = get_taxonomies( array(), 'names' );
-	$taxonomy   = wp_kses_data( wp_unslash( $_POST['taxonomy'] ) );
-	if ( ! in_array( $taxonomy, $taxonomies, true ) ) {
-		return;
-	}
-
-	// output file with terms names or slugs.
-	$terms = bpe_get_terms_array( $taxonomy, $content );
-	bpe_export( $terms );
-	die();
-}
-add_action( 'admin_init', 'bpe_listen_export' );
