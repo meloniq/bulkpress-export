@@ -1,36 +1,39 @@
 <?php
-/*
-	Plugin Name: BulkPress - Export
-	Plugin URI: https://blog.meloniq.net/
-	Description: Export taxonomies into formatted file compatible with BulkPress plugin.
-	Author: MELONIQ.NET
-	Author URI: https://blog.meloniq.net
-	Version: 0.3
-	License: GPLv2 or later
-*/
-
+/**
+ * Plugin Name:       BulkPress - Export
+ * Plugin URI:        https://blog.meloniq.net/
+ *
+ * Description:       Export taxonomies into formatted file compatible with BulkPress plugin.
+ * Tags:              bulkpress, export, taxonomy, terms
+ *
+ * Requires at least: 4.9
+ * Requires PHP:      7.4
+ * Version:           0.4
+ *
+ * Author:            MELONIQ.NET
+ * Author URI:        https://meloniq.net/
+ *
+ * License:           GPLv2
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * Text Domain:       bulkpress-export
+ *
+ * @package BulkPress\Export
+ */
 
 /**
  * Avoid calling file directly
  */
-if ( ! function_exists( 'add_action' ) )
+if ( ! function_exists( 'add_action' ) ) {
 	die( 'Whoops! You shouldn\'t be doing that.' );
+}
 
 
 /**
  * Plugin version and textdomain constants
  */
-define( 'BPE_VERSION', '0.3' );
+define( 'BPE_VERSION', '0.4' );
 define( 'BPE_TD', 'bulkpress-export' );
-
-
-/**
- * Load Text-Domain
- */
-function bpe_load_textdomain() {
-	load_plugin_textdomain( BPE_TD, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-}
-add_action( 'init', 'bpe_load_textdomain' );
 
 
 /**
@@ -46,7 +49,7 @@ if ( is_admin() ) {
  */
 function bpe_add_menu_links() {
 
-	add_management_page( __( 'BulkPress - Export', BPE_TD ), __( 'BulkPress - Export', BPE_TD ), 'administrator', 'bulkpress-export', 'bpe_menu_settings' );
+	add_management_page( __( 'BulkPress - Export', 'bulkpress-export' ), __( 'BulkPress - Export', 'bulkpress-export' ), 'administrator', 'bulkpress-export', 'bpe_menu_settings' );
 }
 
 
@@ -55,7 +58,7 @@ function bpe_add_menu_links() {
  */
 function bpe_menu_settings() {
 
-	include_once( dirname( __FILE__ ) . '/admin-page.php' );
+	include_once __DIR__ . '/admin-page.php';
 }
 
 
@@ -103,7 +106,7 @@ function bpe_get_terms_array( $taxonomy, $content ) {
 /**
  * Creates term path, helper function for bpe_get_taxonomies_array().
  *
- * @param array $terms
+ * @param array  $terms
  * @param object $current_term
  * @param string $path
  *
@@ -199,4 +202,3 @@ function bpe_listen_export() {
 	die();
 }
 add_action( 'admin_init', 'bpe_listen_export' );
-

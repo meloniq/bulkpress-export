@@ -2,13 +2,13 @@
 Contributors: meloniq
 Tags: bulkpress, export, categories, terms, taxonomies
 Requires at least: 4.9
-Tested up to: 6.8
-Stable tag: 0.3
+Tested up to: 6.9
+Stable tag: 0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 
-Export taxonomies into formatted file compatible with BulkPress plugin.
+Export taxonomies into formatted file compatible with BulkPress (Import) plugin.
 
 == Description ==
 
@@ -23,6 +23,9 @@ Export taxonomies into formatted file compatible with [BulkPress](https://wordpr
 
 
 == Changelog ==
+
+= 0.4 =
+* Removed language files, as they are handled by WordPress.org translation system
 
 = 0.3 =
 * Fixed security issue CSRF on admin page
