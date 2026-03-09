@@ -37,7 +37,7 @@ define( 'BPE_TD', 'bulkpress-export' );
 
 
 /**
- * Initialize admin menu
+ * Initialize admin menu.
  */
 if ( is_admin() ) {
 	add_action( 'admin_menu', 'bpe_add_menu_links' );
@@ -45,16 +45,16 @@ if ( is_admin() ) {
 
 
 /**
- * Populate administration menu of the plugin
+ * Populate administration menu of the plugin.
  */
 function bpe_add_menu_links() {
 
-	add_management_page( __( 'BulkPress - Export', 'bulkpress-export' ), __( 'BulkPress - Export', 'bulkpress-export' ), 'administrator', 'bulkpress-export', 'bpe_menu_settings' );
+	add_management_page( __( 'BulkPress - Export', 'bulkpress-export' ), __( 'BulkPress - Export', 'bulkpress-export' ), 'manage_options', 'bulkpress-export', 'bpe_menu_settings' );
 }
 
 
 /**
- * Create settings page in admin
+ * Create settings page in admin.
  */
 function bpe_menu_settings() {
 
@@ -65,10 +65,10 @@ function bpe_menu_settings() {
 /**
  * Creates array of terms paths or slugs.
  *
- * @param string $taxonomy
- * @param string $content
+ * @param string $taxonomy Taxonomy name.
+ * @param string $content Type of content to export, either 'names' or 'slugs'.
  *
- * @return string
+ * @return array Array of terms paths or slugs.
  */
 function bpe_get_terms_array( $taxonomy, $content ) {
 
@@ -77,11 +77,12 @@ function bpe_get_terms_array( $taxonomy, $content ) {
 	}
 
 	$terms_args = array(
+		'taxonomy'   => $taxonomy,
 		'hide_empty' => false,
 	);
 
-	// get all terms for the taxonomy
-	$terms = get_terms( $taxonomy, $terms_args );
+	// get all terms for the taxonomy.
+	$terms = get_terms( $terms_args );
 	$paths = array();
 	$slugs = array();
 
@@ -90,7 +91,7 @@ function bpe_get_terms_array( $taxonomy, $content ) {
 	}
 
 	foreach ( $terms as $key => $term ) {
-		if ( $term->parent == 0 ) {
+		if ( 0 === $term->parent ) {
 			$paths[] = bpe_esc_name( $term->name );
 		} else {
 			$paths[] = bpe_walk_terms( $terms, $term, '' );
@@ -99,28 +100,28 @@ function bpe_get_terms_array( $taxonomy, $content ) {
 	}
 	array_multisort( $paths, $slugs );
 
-	return ( $content == 'names' ) ? $paths : $slugs;
+	return ( 'names' === $content ) ? $paths : $slugs;
 }
 
 
 /**
  * Creates term path, helper function for bpe_get_taxonomies_array().
  *
- * @param array  $terms
- * @param object $current_term
- * @param string $path
+ * @param array  $terms All terms for the taxonomy.
+ * @param object $current_term Current term for which the path is being created.
+ * @param string $path Current path, used for recursive calls, should be empty when calling function for the first time.
  *
  * @return string
  */
 function bpe_walk_terms( $terms, $current_term, $path ) {
 	$path = ( empty( $path ) ) ? bpe_esc_name( $current_term->name ) : bpe_esc_name( $current_term->name ) . '/' . $path;
 
-	if ( $current_term->parent == 0 ) {
+	if ( 0 === $current_term->parent ) {
 		return $path;
 	}
 
 	foreach ( $terms as $term ) {
-		if ( $current_term->parent == $term->term_id ) {
+		if ( $current_term->parent === $term->term_id ) {
 			$path = bpe_walk_terms( $terms, $term, $path );
 			break;
 		}
@@ -133,13 +134,14 @@ function bpe_walk_terms( $terms, $current_term, $path ) {
 /**
  * Escapes name for use in path.
  *
- * @param string $name
+ * @param string $name Name to escape.
  *
  * @return string
  */
 function bpe_esc_name( $name ) {
 	$name = str_replace( '&amp;', '&', $name );
 	$name = str_replace( '/', '\/', $name );
+
 	return $name;
 }
 
@@ -147,17 +149,19 @@ function bpe_esc_name( $name ) {
 /**
  * Generate and send .txt file to user browser.
  *
- * @param array $content
+ * @param array $content Array of lines to output in the file.
+ *
+ * @return void
  */
 function bpe_export( $content = array() ) {
 	$sitename = sanitize_key( get_bloginfo( 'name' ) );
-	$filename = $sitename . '-bulkpress-export-' . date( 'Y-m-d' ) . '.txt';
+	$filename = $sitename . '-bulkpress-export-' . gmdate( 'Y-m-d' ) . '.txt';
 
 	header( 'Content-Description: File Transfer' );
 	header( 'Content-Disposition: attachment; filename=' . $filename );
 	header( 'Content-Type: text/plain; charset=' . get_option( 'blog_charset' ), true );
 
-	echo implode( "\r\n", $content );
+	echo implode( "\r\n", $content ); // phpcs:ignore
 }
 
 
@@ -173,30 +177,30 @@ function bpe_listen_export() {
 		return;
 	}
 
-	// check nonce
+	// check nonce.
 	if ( ! isset( $_POST['_wpnonce'] ) ) {
 		return;
 	}
 
-	if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'bpe-download' ) ) {
+	if ( ! wp_verify_nonce( wp_kses_data( wp_unslash( $_POST['_wpnonce'] ) ), 'bpe-download' ) ) {
 		return;
 	}
 
-	// check given content type value
+	// check given content type value.
 	$content_types = array( 'names', 'slugs' );
-	$content       = wp_kses_data( $_POST['content'] );
-	if ( ! in_array( $content, $content_types ) ) {
+	$content       = wp_kses_data( wp_unslash( $_POST['content'] ) );
+	if ( ! in_array( $content, $content_types, true ) ) {
 		return;
 	}
 
-	// check given taxonomy value
+	// check given taxonomy value.
 	$taxonomies = get_taxonomies( array(), 'names' );
-	$taxonomy   = wp_kses_data( $_POST['taxonomy'] );
-	if ( ! in_array( $taxonomy, $taxonomies ) ) {
+	$taxonomy   = wp_kses_data( wp_unslash( $_POST['taxonomy'] ) );
+	if ( ! in_array( $taxonomy, $taxonomies, true ) ) {
 		return;
 	}
 
-	// output file with terms names or slugs
+	// output file with terms names or slugs.
 	$terms = bpe_get_terms_array( $taxonomy, $content );
 	bpe_export( $terms );
 	die();

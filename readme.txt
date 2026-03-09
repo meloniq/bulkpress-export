@@ -26,6 +26,7 @@ Export taxonomies into formatted file compatible with [BulkPress](https://wordpr
 
 = 0.4 =
 * Removed language files, as they are handled by WordPress.org translation system
+* Fixed coding standards issues reported by CodeSniffer
 
 = 0.3 =
 * Fixed security issue CSRF on admin page
