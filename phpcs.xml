@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ruleset name="BulkPress Export">
+	<description>BulkPress Export rules for PHP_CodeSniffer</description>
+
+	<rule ref="WordPress">
+	</rule>
+</ruleset>
